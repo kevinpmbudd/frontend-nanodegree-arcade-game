@@ -21,6 +21,7 @@ var Engine = (function(global) {
      */
     var doc = global.document,
         win = global.window,
+        winCount = 0,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
@@ -47,6 +48,7 @@ var Engine = (function(global) {
          */
         update(dt);
         render();
+        checkForVictory();
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
@@ -64,7 +66,7 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
+        //reset();
         lastTime = Date.now();
         main();
     }
@@ -80,7 +82,8 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
+
     }
 
     /* This is called by the update function  and loops through all of the
@@ -96,6 +99,43 @@ var Engine = (function(global) {
         });
         player.update();
     }
+
+    /* This checks for collisions between the player and the enemies. If a
+     * collision is detected the game is reset.
+     */
+     function checkCollisions() {
+        allEnemies.forEach(function(enemy) {
+            if (enemy.x + 15 === player.x && enemy.y === player.y) {
+                console.log("collision");
+            }
+        });
+     }
+
+     /* Check the players position to check if they have won the game
+ * if they have won then display message and restart the game
+ * a win count will be added next
+ */
+    function checkForVictory() {
+        if (player.y === -12) {
+            //increment win count
+            winCount++;
+
+            //display message
+            ctx.font = "36pt impact";
+            ctx.textAlign = "center";
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 3;
+            ctx.fillStyle = "white";
+
+            ctx.fillText("WINNER", canvas.width / 2 , 200);
+            ctx.strokeText("WINNER", canvas.width / 2 , 200);
+
+            ctx.fillText("wins: " + winCount, canvas.width / 2 , 400);
+            ctx.strokeText("wins: " + winCount, canvas.width / 2 , 400);
+
+        reset();
+        }
+    };
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -160,7 +200,10 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        //player.x = 200;
+        //player.y = 320;
+        console.log("reset");
+
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -172,7 +215,9 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/winner.png',
+        'images/chicken.gif'
     ]);
     Resources.onReady(init);
 
