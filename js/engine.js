@@ -46,9 +46,11 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
+
         update(dt);
         render();
-        checkForVictory();
+        player.checkForVictory();
+        playAgain();
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
@@ -82,7 +84,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        checkCollisions();
+        //checkCollisions();
 
     }
 
@@ -100,42 +102,25 @@ var Engine = (function(global) {
         player.update();
     }
 
-    /* This checks for collisions between the player and the enemies. If a
-     * collision is detected the game is reset.
+
+    /* Prompt the player to play the game again. If they say yes then
+     * the game begins again.
      */
-     function checkCollisions() {
-        allEnemies.forEach(function(enemy) {
-            if (enemy.x + 15 === player.x && enemy.y === player.y) {
-                console.log("collision");
-            }
-        });
+     function playAgain() {
+
+        ctx.font = "36pt impact";
+        ctx.textAlign = "center";
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 3;
+        ctx.fillStyle = "white";
+
+        if (player.y === -12) {
+            ctx.fillText("Press Enter to Play Again", canvas.width / 2 , 350);
+            ctx.strokeText("Press Enter to Play Again", canvas.width / 2 , 350);
+        }
+
      }
 
-     /* Check the players position to check if they have won the game
- * if they have won then display message and restart the game
- * a win count will be added next
- */
-    function checkForVictory() {
-        if (player.y === -12) {
-            //increment win count
-            winCount++;
-
-            //display message
-            ctx.font = "36pt impact";
-            ctx.textAlign = "center";
-            ctx.strokeStyle = "black";
-            ctx.lineWidth = 3;
-            ctx.fillStyle = "white";
-
-            ctx.fillText("WINNER", canvas.width / 2 , 200);
-            ctx.strokeText("WINNER", canvas.width / 2 , 200);
-
-            ctx.fillText("wins: " + winCount, canvas.width / 2 , 400);
-            ctx.strokeText("wins: " + winCount, canvas.width / 2 , 400);
-
-        reset();
-        }
-    };
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every

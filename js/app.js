@@ -20,8 +20,18 @@ Enemy.prototype.update = function(dt) {
     this.x = this.x + this.speed * dt;
 
     if (this.x > 505) {
-        this.x = 0;
+        this.x = -100;
     }
+
+    var bugXBufferLeft = this.x - 60,
+        bugXBufferRight = this.x + 60,
+        bugYBufferTop = this.y - 60,
+        bugYBufferBottom = this.y + 60;
+
+    if (player.x > bugXBufferLeft && player.x < bugXBufferRight && player.y > bugYBufferTop && player.y < bugYBufferBottom) {
+        player.resetPlayer();
+    }
+
 };
 
 // Draw the enemy on the screen, required method for game
@@ -46,12 +56,7 @@ Player.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    allEnemies.forEach(function(enemy) {
-            if (enemy.x == this.x  && enemy.y == this.y) {
-                console.log("collision detected");
-                Engine.reset();
-            }
-        });
+    this.checkForVictory();
 };
 
 // Draw the player on the screen, required method for game
@@ -66,14 +71,25 @@ Player.prototype.render = function() {
  */
 Player.prototype.checkForVictory = function() {
 
+    //console.log("checking");
     if (this.y === -12) {
+        console.log("eqauls");
         //display message
-        //ctx.drawImage(Resources.get('images/winner.jpg'), 200, 200);
-        //reset position
-        //this.x = 200;
-        //this.y = 320;
-        reset();
+        ctx.font = "36pt impact";
+        ctx.textAlign = "center";
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 3;
+        ctx.fillStyle = "white";
+
+        ctx.fillText("WINNER!", 252.5 , 200);
+        ctx.strokeText("WINNER!", 252.5 , 200);
     }
+};
+
+// Reset the player to its original location
+Player.prototype.resetPlayer = function() {
+    this.x = 200;
+    this.y = 320;
 };
 
 // Handle input from the keyboard to control players movement
@@ -99,6 +115,9 @@ Player.prototype.handleInput = function (move) {
                 this.y = this.y + 83;
             }
             break;
+        case 'enter':
+            this.resetPlayer();
+            break;
     }
 
 }
@@ -108,9 +127,10 @@ Player.prototype.handleInput = function (move) {
 // Place the player object in a variable called player
 var allEnemies = [];
 for(var i = 1; i < 4; i++){
-    var enemy = new Enemy([-100, (83 * i) - 21]);
-    allEnemies.push(enemy);
-    console.log(enemy);
+    var enemy1 = new Enemy([-100, (83 * i) - 21]);
+    var enemy2 = new Enemy([-300, (83 * i) - 21]);
+    allEnemies.push(enemy1, enemy2);
+    //console.log(enemy);
 }
 
 var player = new Player([200,320]);
@@ -119,6 +139,7 @@ var player = new Player([200,320]);
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
+        13: 'enter',
         37: 'left',
         38: 'up',
         39: 'right',
