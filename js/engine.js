@@ -21,7 +21,6 @@ var Engine = (function(global) {
      */
     var doc = global.document,
         win = global.window,
-        winCount = 0,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
@@ -49,7 +48,6 @@ var Engine = (function(global) {
 
         update(dt);
         render();
-        player.checkForVictory();
         playAgain();
 
         /* Set our lastTime variable which is used to determine the time delta
@@ -115,6 +113,8 @@ var Engine = (function(global) {
         ctx.fillStyle = "white";
 
         if (player.y === -12) {
+            ctx.fillText("WINNER!", 252.5, 200);
+            ctx.strokeText("WINNER!", 252.5, 200);
             ctx.fillText("Press Enter to Play Again", canvas.width / 2 , 350);
             ctx.strokeText("Press Enter to Play Again", canvas.width / 2 , 350);
         }
@@ -200,9 +200,7 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png',
-        'images/winner.png',
-        'images/chicken.gif'
+        'images/char-boy.png'
     ]);
     Resources.onReady(init);
 
